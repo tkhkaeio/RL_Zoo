@@ -66,7 +66,7 @@ def train(opt):
         observation = env.reset()  # envからは4次元の連続値の観測が帰ってくる
         episode_reward = agent.train_per_one_episode(episode, observation, env)
         episode_rewards.append(episode_reward)
-        if episode % 50 == 0:
+        if episode % 200 == 0:
             print("Episode %d finished | Episode reward %f" % (episode, episode_reward))
                 
     # 学習途中の累積報酬の移動平均を表示
@@ -82,7 +82,7 @@ def train(opt):
     env.close()
     return agent
 
-def test(agent):
+def test(opt, agent):
     # 最終的に得られた方策のテスト（可視化）
     env = gym.make('CartPole-v0')
     frames = []
@@ -115,10 +115,10 @@ def test(agent):
     HTML(anim.to_jshtml())
 
     Writer = animation.writers['ffmpeg']
-    writer = Writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
+    writer = Writer(fps=20, metadata=dict(artist='Me'), bitrate=1800)
     anim.save("fig/%s_%s.mp4" % (opt.algorithm, 'CartPole-v0'), writer=writer)
     
 
 if __name__ == "__main__":
     trained_agent = train(opt)
-    test(trained_agent)
+    test(opt, trained_agent)
