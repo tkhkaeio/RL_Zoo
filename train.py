@@ -1,4 +1,4 @@
-import os.sys
+import os, sys
 import numpy as np
 import argparse
 import copy
