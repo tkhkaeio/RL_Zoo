@@ -39,15 +39,20 @@ num_average_epidodes = 10
 def define_agent(algorithm, state_space, action_space, env):
     if algorithm=="SARSA":
         agent = SARSAAgent(opt, state_space, action_space)
+        opt.is_discrete_state = True
     elif algorithm == "Qlearning":
         agent = QLearningAgent(opt, state_space, action_space)
+        opt.is_discrete_state = True
     elif algorithm == "DQN":
         agent = DQNAgent(opt, state_space, action_space, memory_size=opt.memory_size)
         agent.init_replay_buffer(env)  # 最初にreplay bufferにランダムな行動をしたときのデータを入れる
+        opt.is_discrete_state = False
     elif algorithm == "REINFORCE":
         agent = REINFORCEAgent(opt, state_space, action_space, opt.use_baseline)
+        opt.is_discrete_state = False
     elif algorithm == "ActorCritic":
         agent = ActorCriticAgent(opt, state_space, action_space, opt.use_baseline)
+        opt.is_discrete_state = False
     else:
         raise NotImplementedError()
     return agent
@@ -83,7 +88,10 @@ def test(agent):
     frames = []
     for episode in range(5):
         observation = env.reset()
-        state = discretize_state(observation, opt.num_discretize)
+        if opt.is_discrete_state:
+            state = discretize_state(observation, opt.num_discretize)
+        else:
+            state = observation
         frames.append(env.render(mode='rgb_array'))
         done = False
         while not done:
@@ -102,7 +110,11 @@ def test(agent):
         
     anim = animation.FuncAnimation(plt.gcf(), animate, frames=len(frames), interval=50)
     HTML(anim.to_jshtml())
-    anim.save("fig/%s_%s.gif"%(opt.algorithm, 'CartPole-v0'), writer = 'imagemagick')
+
+    Writer = animation.writers['ffmpeg']
+    writer = Writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
+    anim.save("fig/%s_%s.mp4" % (opt.algorithm, 'CartPole-v0'), writer=writer)
+    
 
 if __name__ == "__main__":
     trained_agent = train(opt)
