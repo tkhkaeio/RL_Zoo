@@ -18,6 +18,8 @@ class REINFORCEAgent(BaseModel):
         self.memory = []  # 報酬とそのときの行動選択確率のtupleをlistで保存
         self.sum_reward = 0
         self.use_baseline = use_baseline
+        if self.use_baseline:
+            opt.algorithm += "_with_baseline"
     
     def train_per_one_episode(self, episode, observation, env):
         state = observation # use continuous state
