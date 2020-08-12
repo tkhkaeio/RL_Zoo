@@ -100,6 +100,8 @@ def test(agent):
             frames.append(env.render(mode='rgb_array'))
             if opt.is_discrete_state:
                 state = discretize_state(next_observation, opt.num_discretize)
+            else:
+                state = next_observation
     env.close()
 
     plt.figure(figsize=(frames[0].shape[1]/72.0, frames[0].shape[0]/72.0), dpi=72)
