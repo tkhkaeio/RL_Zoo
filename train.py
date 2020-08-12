@@ -70,7 +70,9 @@ def train(opt):
     plt.title('%s: average rewards in %d episodes' % (opt.algorithm, num_average_epidodes))
     plt.xlabel('episode')
     plt.ylabel('rewards')
-    plt.show()
+    #plt.show()
+    plt.savefig("fig/%s_reward.png" % opt.algorithm)
+    plt.close()
 
     env.close()
     return agent
@@ -100,6 +102,7 @@ def test(agent):
         
     anim = animation.FuncAnimation(plt.gcf(), animate, frames=len(frames), interval=50)
     HTML(anim.to_jshtml())
+    anim.save("%s_%s.gif"%(opt.algorithm, 'CartPole-v0'), writer = 'imagemagick')
 
 if __name__ == "__main__":
     trained_agent = train(opt)
