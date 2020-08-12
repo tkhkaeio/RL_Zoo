@@ -102,7 +102,7 @@ def test(agent):
         
     anim = animation.FuncAnimation(plt.gcf(), animate, frames=len(frames), interval=50)
     HTML(anim.to_jshtml())
-    anim.save("%s_%s.gif"%(opt.algorithm, 'CartPole-v0'), writer = 'imagemagick')
+    anim.save("fig/%s_%s.gif"%(opt.algorithm, 'CartPole-v0'), writer = 'imagemagick')
 
 if __name__ == "__main__":
     trained_agent = train(opt)
