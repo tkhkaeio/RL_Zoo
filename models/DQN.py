@@ -41,8 +41,8 @@ class DQNAgent(BaseModel):
     def train_per_one_episode(self, episode, observation, env):
         state = observation # use continuous state
         episode_reward = 0
-        for t in range(opt.max_steps):
-            action = agent.get_action(state).data.numpy()  #  行動を選択
+        for t in range(self.opt.max_steps):
+            action = self.get_action(state, episode)  # 行動を選択
             next_state, reward, done, _ = env.step(action)
             episode_reward += reward
             transition = {
@@ -52,8 +52,8 @@ class DQNAgent(BaseModel):
                 'action': action,
                 'done': int(done)
             }
-            agent.replay_buffer.append(transition)
-            agent.update()  # actorとcriticを更新
+            self.replay_buffer.append(transition)
+            self.update_q()  # Q関数を更新
             state = next_state
             if done:
                 break
