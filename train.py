@@ -48,10 +48,10 @@ def define_agent(algorithm, state_space, action_space, env):
         agent.init_replay_buffer(env)  # 最初にreplay bufferにランダムな行動をしたときのデータを入れる
         opt.is_discrete_state = False
     elif algorithm == "REINFORCE":
-        agent = REINFORCEAgent(opt, state_space, action_space, opt.use_baseline)
+        agent = REINFORCEAgent(opt, state_space, action_space, use_baseline=opt.use_baseline)
         opt.is_discrete_state = False
     elif algorithm == "ActorCritic":
-        agent = ActorCriticAgent(opt, state_space, action_space, opt.use_baseline)
+        agent = ActorCriticAgent(opt, state_space, action_space)
         opt.is_discrete_state = False
     else:
         raise NotImplementedError()
