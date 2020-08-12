@@ -98,7 +98,8 @@ def test(agent):
             action = agent.get_greedy_action(state)
             next_observation, reward, done, _ = env.step(action)
             frames.append(env.render(mode='rgb_array'))
-            state = discretize_state(next_observation, opt.num_discretize)
+            if opt.is_discrete_state:
+                state = discretize_state(next_observation, opt.num_discretize)
     env.close()
 
     plt.figure(figsize=(frames[0].shape[1]/72.0, frames[0].shape[0]/72.0), dpi=72)
