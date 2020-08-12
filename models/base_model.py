@@ -6,17 +6,17 @@ class BaseModel(ABC):
         self.opt = opt
         self.num_state = num_state
         self.num_action = num_action
-        self.gamma = gamma  # 割引率
+        self.gamma = gamma  # discount rate
     
     @abstractmethod
     def train_per_one_episode(self, episode, observation, env):
         pass
     
-    # Q値が最大の行動を選択
+    # choose the action with the highest Q-value
     @abstractmethod
     def get_greedy_action(self, state):
         pass
     
-    # 行動を選択
+    # choose an action
     def get_action(self, state, episode):
         pass

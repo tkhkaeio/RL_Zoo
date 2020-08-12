@@ -1,8 +1,6 @@
 import numpy as np
 from collections import deque
 
-
-# リプレイバッファの定義
 class ReplayBuffer:
     def __init__(self, memory_size):
         self.memory_size = memory_size

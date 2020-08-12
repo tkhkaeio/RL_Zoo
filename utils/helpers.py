@@ -3,7 +3,8 @@ import numpy as np
 def bins(clip_min, clip_max, num):
     return np.linspace(clip_min, clip_max, num+1)[1:-1]
 
-# 状態を離散化して対応するインデックスを返す関数（binの上限・下限はcartpole環境固有のものを用いています）
+# discretize the state and return the corresponding index
+# (the upper and lower limits of bin are specific to the cartpole environment)
 def discretize_state(observation, num_discretize):
     c_pos, c_v, p_angle, p_v = observation
     discretized = [

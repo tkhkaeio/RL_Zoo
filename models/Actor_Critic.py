@@ -16,15 +16,15 @@ class ActorCriticAgent(BaseModel):
         BaseModel.__init__(self, opt, num_state, num_action, gamma)
         self.ac_net = ActorCriticNetwork(num_state, num_action)
         self.optimizer = optim.Adam(self.ac_net.parameters(), lr=lr, betas=(beta1, beta2))
-        self.memory = []  # （報酬，行動選択確率，状態価値）のtupleをlistで保存
+        self.memory = []  # save the tuple of (reward, action choice probability, state value)
     
     def train_per_one_episode(self, episode, observation, env):
         state = observation # use continuous state
         episode_reward = 0
         for t in range(self.opt.max_steps):
-            action, prob, state_value = self.get_action(state)  #  行動を選択
+            action, prob, state_value = self.get_action(state)
             next_state, reward, done, _ = env.step(action)
-            # # もしエピソードの途中で終了してしまったらペナルティを加える
+            # # if the episode ends in the middle of an episode, add a penalty
             # if done and t < self.opt.max_steps - 1:
             #     reward = - penalty
             episode_reward += reward
@@ -36,7 +36,6 @@ class ActorCriticAgent(BaseModel):
                 break
         return episode_reward
         
-    # 方策を更新
     def update_policy(self):
         R = 0
         actor_loss = 0
@@ -53,14 +52,14 @@ class ActorCriticAgent(BaseModel):
         loss.backward()
         self.optimizer.step()
     
-    # softmaxの出力が最も大きい行動を選択
+    # choose the action with the highest softmax output
     def get_greedy_action(self, state):
         state_tensor = torch.tensor(state, dtype=torch.float).view(-1, self.num_state)
         action_prob, _ = self.ac_net(state_tensor.data)
         action = torch.argmax(action_prob.squeeze().data).item()
         return action
     
-    # カテゴリカル分布からサンプリングして行動を選択
+    # sampling from categorical distributions and selecting actions
     def get_action(self, state):
         state_tensor = torch.tensor(state, dtype=torch.float).view(-1, self.num_state)
         action_prob, state_value = self.ac_net(state_tensor.data)

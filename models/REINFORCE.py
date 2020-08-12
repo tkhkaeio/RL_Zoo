@@ -15,7 +15,7 @@ class REINFORCEAgent(BaseModel):
         BaseModel.__init__(self, opt, num_state, num_action, gamma)
         self.pi_net = PolicyNetwork(num_state, num_action)
         self.optimizer = optim.Adam(self.pi_net.parameters(), lr=lr, betas=(beta1, beta2))
-        self.memory = []  # 報酬とそのときの行動選択確率のtupleをlistで保存
+        self.memory = []  # save the reward and the tuple of the action selection probability
         self.sum_reward = 0
         self.use_baseline = use_baseline
         if self.use_baseline:
@@ -25,9 +25,9 @@ class REINFORCEAgent(BaseModel):
         state = observation # use continuous state
         episode_reward = 0
         for t in range(self.opt.max_steps):
-            action, prob = self.get_action(state)  #  行動を選択
+            action, prob = self.get_action(state)
             next_state, reward, done, _ = env.step(action)
-            # # もしエピソードの途中で終了してしまったらペナルティを加える
+            # # if the episode ends in the middle of an episode, add a penalty
             # if done and t < self.opt.max_steps - 1:
             #     reward = - penalty
             episode_reward += reward
@@ -42,11 +42,10 @@ class REINFORCEAgent(BaseModel):
                 break
         return episode_reward
 
-    # 方策を更新
     def update_policy(self):
         R = 0
         loss = 0
-        # エピソード内の各ステップの収益を後ろから計算
+        # calculate the returns for each step in the episode from behind
         for r, prob in self.memory[::-1]:
             R = r + self.gamma * R
             loss -= torch.log(prob) * R
@@ -55,12 +54,12 @@ class REINFORCEAgent(BaseModel):
         loss.backward()
         self.optimizer.step()
     
-    # 方策を更新
+    # use a baseline subtraction
     def update_policy_with_baseline(self):
         R = 0
         loss = 0
         b  = self.sum_reward / len(self.memory) # average reward
-        # エピソード内の各ステップの収益を後ろから計算
+        # calculate the returns for each step in the episode from behind
         for r, prob in self.memory[::-1]:
             R = r + self.gamma * R
             f_pi  = R - b
@@ -70,14 +69,14 @@ class REINFORCEAgent(BaseModel):
         loss.backward()
         self.optimizer.step()
     
-    # softmaxの出力が最も大きい行動を選択
+    # choose the action with the highest softmax output
     def get_greedy_action(self, state):
         state_tensor = torch.tensor(state, dtype=torch.float).view(-1, self.num_state)
         action_prob = self.pi_net(state_tensor.data).squeeze()
         action = torch.argmax(action_prob.data).item()
         return action
 
-    # カテゴリカル分布からサンプリングして行動を選択
+    # sampling from categorical distributions and selecting actions
     def get_action(self, state):
         state_tensor = torch.tensor(state, dtype=torch.float).view(-1, self.num_state)
         action_prob = self.pi_net(state_tensor.data).squeeze()
