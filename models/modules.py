@@ -1,4 +1,6 @@
 import numpy as np
+from collections import deque
+
 
 # リプレイバッファの定義
 class ReplayBuffer:
