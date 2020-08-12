@@ -1,15 +1,15 @@
 # RL Zoo
 
-This repository is a collection of RL algorithms. (e.g., SARSA, Q Learning, DQN, REINFORCE, Actor-Critic)
+This repository is a collection of RL algorithms. (e.g., SARSA, Q Learning, DQN, REINFORCE, Actor-Critic, etc)
 
-<img src="fig/demo.png">
+<img src="fig/demo_cartpole.gif">
 
 ## Requirements
 Python > 3.7 \
 PyTorch > 1.0 \
 OpenAIGym > 0.17.2 \
 JSAnimation \
-IPython \
+IPython
 
 ## Running the Code
 ### Directory structure
