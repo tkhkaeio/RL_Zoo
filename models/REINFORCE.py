@@ -19,7 +19,7 @@ class REINFORCEAgent(BaseModel):
         self.sum_reward = 0
         self.use_baseline = use_baseline
         if self.use_baseline:
-            opt.algorithm += "_with_baseline"
+            opt.name += "_with_baseline"
     
     def train_per_one_episode(self, episode, observation, env):
         state = observation # use continuous state

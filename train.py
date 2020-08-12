@@ -23,6 +23,7 @@ parser.add_argument("--algorithm", "-algo", type=str, help="the name of a model"
 parser.add_argument("--num_episode", type=int, help="the number of episodes for training", default=1200)
 parser.add_argument("--memory_size", type=int, help="the size of replay buffer", default=50000)
 parser.add_argument("--use_baseline", action="store_true", help="use RINFORCE with baseline")
+parser.add_argument("--suffix", type=str, help="the suffix of a model name")
 
 opt = parser.parse_args()
 
@@ -30,7 +31,9 @@ opt = parser.parse_args()
 opt.penalty = 10  # 途中でエピソードが終了したときのペナルティ
 opt.num_discretize = 6  # 状態空間の分割数
 opt.initial_memory_size = 500  # 最初に貯めるランダムな遷移の数
-
+opt.name = opt.algorithm
+if opt.suffix:
+    opt.name += "_%s"%opt.suffix
 
 # ログ用の設定
 episode_rewards = []
@@ -72,11 +75,11 @@ def train(opt):
     # 学習途中の累積報酬の移動平均を表示
     moving_average = np.convolve(episode_rewards, np.ones(num_average_epidodes)/num_average_epidodes, mode='valid')
     plt.plot(np.arange(len(moving_average)),moving_average)
-    plt.title('%s: average rewards in %d episodes' % (opt.algorithm, num_average_epidodes))
+    plt.title('%s: average rewards in %d episodes' % (opt.name, num_average_epidodes))
     plt.xlabel('episode')
     plt.ylabel('rewards')
     #plt.show()
-    plt.savefig("fig/%s_reward.png" % opt.algorithm)
+    plt.savefig("fig/%s_reward.png" % opt.name)
     plt.close()
 
     env.close()
@@ -116,7 +119,7 @@ def test(opt, agent):
 
     Writer = animation.writers['ffmpeg']
     writer = Writer(fps=20, metadata=dict(artist='Me'), bitrate=1800)
-    anim.save("fig/%s_%s.mp4" % (opt.algorithm, 'CartPole-v0'), writer=writer)
+    anim.save("fig/%s_%s.mp4" % (opt.name, 'CartPole-v0'), writer=writer)
     
 
 if __name__ == "__main__":
